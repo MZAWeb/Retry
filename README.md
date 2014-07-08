@@ -19,3 +19,19 @@ $response = Retry::calling( 'wp_remote_post' )
 		                 ->failed_if( 'is_wp_error' )
 		                 ->go();
 ```
+
+The callables can be closures for more advanced behaviour:
+
+```
+$response = Retry::calling( 'wp_remote_post' )
+		   ->with_args( array( $url, $args ) )
+		   ->times( 3 )
+		   ->failed_if( function ( $response ) {
+			if ( $response->response['code'] === 404 ) {
+				return false;
+			}
+
+			return true;
+		   } )
+		   ->go();
+```
